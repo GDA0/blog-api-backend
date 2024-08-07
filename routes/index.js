@@ -1,9 +1,10 @@
-const express = require('express')
-const router = express.Router()
+const express = require("express");
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-  res.render('index', { title: 'Express' })
-})
+const authenticate = require("../src/middlewares/authenticate");
+const indexController = require("../src/controllers/index");
 
-module.exports = router
+const router = express.Router();
+
+router.get("/", authenticate, indexController.handleIndexGet);
+
+module.exports = router;

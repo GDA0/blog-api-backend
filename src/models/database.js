@@ -7,9 +7,9 @@ async function checkUsernameExists(username) {
     const user = await prisma.user.findUnique({
       where: { username },
     });
-    return user !== null; // returns true if user exists, false otherwise
+    return user !== null;
   } catch (error) {
-    console.error("Error checking username existence:", error);
+    console.error(error);
     throw error;
   }
 }
@@ -24,10 +24,30 @@ async function createUser(firstName, lastName, username, password) {
         password,
       },
     });
-
     return user;
   } catch (error) {
-    console.error("Error adding user:", error);
+    console.error(error);
+    throw error;
+  }
+}
+
+async function findUser(method, value) {
+  try {
+    let user;
+    if (method === "username") {
+      user = await prisma.user.findUnique({
+        where: { username: value },
+      });
+    } else if (method === "id") {
+      user = await prisma.user.findUnique({
+        where: { id: value },
+      });
+    } else {
+      throw new Error('Invalid method. Use "username" or "id".');
+    }
+    return user;
+  } catch (error) {
+    console.error(error);
     throw error;
   }
 }
@@ -35,4 +55,5 @@ async function createUser(firstName, lastName, username, password) {
 module.exports = {
   checkUsernameExists,
   createUser,
+  findUser,
 };
