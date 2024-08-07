@@ -1,6 +1,8 @@
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+
 const database = require("../models/database");
 
 const handleSignUpPost = [
@@ -50,16 +52,16 @@ const handleSignUpPost = [
     const { firstName, lastName, username, password } = req.body;
 
     try {
-      const usernameExists = await database.checkUsernameExists(username);
+      let user = await database.findUser("username", username);
 
-      if (usernameExists) {
+      if (user) {
         return res
           .status(400)
           .json({ errors: [{ msg: "Username is already taken" }] });
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await database.createUser(
+      user = await database.createUser(
         firstName,
         lastName,
         username,
@@ -71,9 +73,14 @@ const handleSignUpPost = [
         expiresIn: "1h",
       });
 
-      res
-        .status(201)
-        .json({ msg: "Sign up was successful. Logging you in...", token });
+      const refreshToken = crypto.randomBytes(64).toString("hex");
+      await database.createRefreshToken(refreshToken, user.id);
+
+      res.status(201).json({
+        msg: "Sign up was successful. Logging you in...",
+        token,
+        refreshToken,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({
@@ -136,7 +143,10 @@ const handleLogInPost = [
         expiresIn: "1h",
       });
 
-      res.json({ msg: "Logging you in...", token });
+      const refreshToken = crypto.randomBytes(64).toString("hex");
+      await database.createRefreshToken(refreshToken, user.id);
+
+      res.json({ msg: "Logging you in...", token, refreshToken });
     } catch (error) {
       console.error(error);
       res.status(500).json({
@@ -148,12 +158,35 @@ const handleLogInPost = [
   },
 ];
 
-function handleLogOutPost(req, res) {
-  res.sendStatus(200)
+function handleLogOutGet(req, res) {
+  res.sendStatus(200);
+}
+
+async function handleRefreshTokenPost(req, res) {
+  const { refreshToken } = req.body;
+
+  try {
+    const storedRefreshToken = await database.findRefreshToken(refreshToken);
+
+    if (!storedRefreshToken) {
+      return res.sendStatus(401);
+    }
+
+    const payload = { id: storedRefreshToken.userId };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.json({ token });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
 }
 
 module.exports = {
   handleSignUpPost,
   handleLogInPost,
-  handleLogOutPost,
+  handleLogOutGet,
+  handleRefreshTokenPost,
 };
