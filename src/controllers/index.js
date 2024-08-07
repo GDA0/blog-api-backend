@@ -1,7 +1,7 @@
 async function handleIndexGet(req, res) {
   if (req.user) {
-    const { firstName, username } = req.user;
-    res.json({ user: { firstName, username } });
+    const { firstName, lastName, username } = req.user;
+    res.json({ user: { firstName, lastName, username } });
   } else {
     res.json({ user: null });
   }

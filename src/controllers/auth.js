@@ -148,7 +148,12 @@ const handleLogInPost = [
   },
 ];
 
+function handleLogOutPost(req, res) {
+  res.sendStatus(200)
+}
+
 module.exports = {
   handleSignUpPost,
   handleLogInPost,
+  handleLogOutPost,
 };
