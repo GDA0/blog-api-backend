@@ -83,7 +83,6 @@ async function findPosts() {
             updatedAt: "desc",
           },
         },
-        likes: true,
       },
       orderBy: {
         updatedAt: "desc",
