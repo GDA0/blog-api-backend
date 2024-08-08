@@ -4,8 +4,8 @@ async function handleIndexGet(req, res) {
   try {
     const posts = await database.findPosts();
     if (req.user) {
-      const { firstName, lastName, username } = req.user;
-      res.json({ user: { firstName, lastName, username }, posts });
+      const { id, firstName, lastName, username } = req.user;
+      res.json({ user: { id, firstName, lastName, username }, posts });
     } else {
       res.json({ user: null, posts });
     }
@@ -15,6 +15,20 @@ async function handleIndexGet(req, res) {
   }
 }
 
+async function handleCommentPost(req, res) {
+  const { postId } = req.params;
+  const { content, authorId } = req.body;
+
+  try {
+    const comment = await database.createComment(content, postId, authorId);
+    res.json({ comment });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(404);
+  }
+}
+
 module.exports = {
   handleIndexGet,
+  handleCommentPost,
 };

@@ -75,7 +75,14 @@ async function findPosts() {
       },
       include: {
         author: true,
-        comments: true,
+        comments: {
+          include: {
+            author: true,
+          },
+          orderBy: {
+            updatedAt: "desc",
+          },
+        },
         likes: true,
       },
       orderBy: {
@@ -90,10 +97,30 @@ async function findPosts() {
   }
 }
 
+async function createComment(content, postId, authorId) {
+  try {
+    const comment = await prisma.comment.create({
+      data: {
+        content,
+        postId,
+        authorId,
+      },
+      include: {
+        author: true,
+      },
+    });
+    return comment;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 module.exports = {
   createUser,
   findUser,
   createRefreshToken,
   findRefreshToken,
   findPosts,
+  createComment,
 };
