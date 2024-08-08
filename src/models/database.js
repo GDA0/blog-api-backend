@@ -61,7 +61,33 @@ async function findRefreshToken(token) {
     });
 
     return refreshToken;
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+async function findPosts() {
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        published: true,
+      },
+      include: {
+        author: true,
+        comments: true,
+        likes: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+
+    return posts;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 module.exports = {
@@ -69,4 +95,5 @@ module.exports = {
   findUser,
   createRefreshToken,
   findRefreshToken,
+  findPosts,
 };
