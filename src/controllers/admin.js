@@ -10,6 +10,20 @@ async function handleIndexGet(req, res) {
   }
 }
 
+async function handleIndexPut(req, res) {
+  const { postId } = req.params;
+  const { title, content } = req.body;
+  try {
+    const updatedPost = await database.updatePost(postId, title, content);
+
+    res.json({ updatedPost });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}
+
 module.exports = {
   handleIndexGet,
+  handleIndexPut,
 };

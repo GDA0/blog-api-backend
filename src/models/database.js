@@ -138,6 +138,24 @@ async function findAllPosts() {
   }
 }
 
+async function updatePost(postId, title, content) {
+  try {
+    const updatedPost = await prisma.post.update({
+      where: {
+        id: postId,
+      },
+      data: {
+        title,
+        content,
+      },
+    });
+    return updatedPost;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 module.exports = {
   createUser,
   findUser,
@@ -146,4 +164,5 @@ module.exports = {
   findPublishedPosts,
   createComment,
   findAllPosts,
+  updatePost,
 };
