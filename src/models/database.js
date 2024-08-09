@@ -115,6 +115,29 @@ async function createComment(content, postId, authorId) {
   }
 }
 
+async function findAllPosts() {
+  try {
+    const posts = await prisma.post.findMany({
+      include: {
+        comments: {
+          include: {
+            author: true,
+          },
+          orderBy: {
+            updatedAt: "desc",
+          },
+        },
+      },
+      orderBy: [{ published: "desc" }, { updatedAt: "desc" }],
+    });
+
+    return posts;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
 module.exports = {
   createUser,
   findUser,
@@ -122,4 +145,5 @@ module.exports = {
   findRefreshToken,
   findPublishedPosts,
   createComment,
+  findAllPosts,
 };
