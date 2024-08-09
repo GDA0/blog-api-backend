@@ -1,158 +1,158 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client')
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-async function createUser(firstName, lastName, username, password) {
+async function createUser (firstName, lastName, username, password) {
   try {
     const user = await prisma.user.create({
       data: {
         firstName,
         lastName,
         username,
-        password,
-      },
-    });
-    return user;
+        password
+      }
+    })
+    return user
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error(error)
+    throw error
   }
 }
 
-async function findUser(method, value) {
+async function findUser (method, value) {
   try {
-    let user;
-    if (method === "username") {
+    let user
+    if (method === 'username') {
       user = await prisma.user.findUnique({
-        where: { username: value },
-      });
-    } else if (method === "id") {
+        where: { username: value }
+      })
+    } else if (method === 'id') {
       user = await prisma.user.findUnique({
-        where: { id: value },
-      });
+        where: { id: value }
+      })
     } else {
-      throw new Error('Invalid method. Use "username" or "id".');
+      throw new Error('Invalid method. Use "username" or "id".')
     }
-    return user;
+    return user
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error(error)
+    throw error
   }
 }
 
-async function createRefreshToken(token, userId) {
+async function createRefreshToken (token, userId) {
   try {
     await prisma.refreshToken.create({
       data: {
         token,
-        userId,
-      },
-    });
+        userId
+      }
+    })
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error(error)
+    throw error
   }
 }
 
-async function findRefreshToken(token) {
+async function findRefreshToken (token) {
   try {
     const refreshToken = await prisma.refreshToken.findUnique({
-      where: { token },
-    });
+      where: { token }
+    })
 
-    return refreshToken;
+    return refreshToken
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error(error)
+    throw error
   }
 }
 
-async function findPublishedPosts() {
+async function findPublishedPosts () {
   try {
     const posts = await prisma.post.findMany({
       where: {
-        published: true,
+        published: true
       },
       include: {
         author: true,
         comments: {
           include: {
-            author: true,
+            author: true
           },
           orderBy: {
-            updatedAt: "desc",
-          },
-        },
+            updatedAt: 'desc'
+          }
+        }
       },
       orderBy: {
-        updatedAt: "desc",
-      },
-    });
+        updatedAt: 'desc'
+      }
+    })
 
-    return posts;
+    return posts
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error(error)
+    throw error
   }
 }
 
-async function createComment(content, postId, authorId) {
+async function createComment (content, postId, authorId) {
   try {
     const comment = await prisma.comment.create({
       data: {
         content,
         postId,
-        authorId,
+        authorId
       },
       include: {
-        author: true,
-      },
-    });
-    return comment;
+        author: true
+      }
+    })
+    return comment
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error(error)
+    throw error
   }
 }
 
-async function findAllPosts() {
+async function findAllPosts () {
   try {
     const posts = await prisma.post.findMany({
       include: {
         comments: {
           include: {
-            author: true,
+            author: true
           },
           orderBy: {
-            updatedAt: "desc",
-          },
-        },
+            updatedAt: 'desc'
+          }
+        }
       },
-      orderBy: [{ published: "desc" }, { updatedAt: "desc" }],
-    });
+      orderBy: [{ published: 'desc' }, { updatedAt: 'desc' }]
+    })
 
-    return posts;
+    return posts
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error(error)
+    throw error
   }
 }
 
-async function updatePost(postId, title, content) {
+async function updatePost (postId, title, content) {
   try {
     const updatedPost = await prisma.post.update({
       where: {
-        id: postId,
+        id: postId
       },
       data: {
         title,
-        content,
-      },
-    });
-    return updatedPost;
+        content
+      }
+    })
+    return updatedPost
   } catch (error) {
-    console.error(error);
-    throw error;
+    console.error(error)
+    throw error
   }
 }
 
@@ -164,5 +164,5 @@ module.exports = {
   findPublishedPosts,
   createComment,
   findAllPosts,
-  updatePost,
-};
+  updatePost
+}

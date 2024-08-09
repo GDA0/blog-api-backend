@@ -1,23 +1,23 @@
-const passport = require("passport");
-const configurePassport = require("../utils/configure-passport");
+const passport = require('passport')
+const configurePassport = require('../utils/configure-passport')
 
-configurePassport(passport);
+configurePassport(passport)
 
 const authenticate = (req, res, next) => {
-  passport.authenticate("jwt", { session: false }, (error, user, info) => {
+  passport.authenticate('jwt', { session: false }, (error, user, info) => {
     if (error) {
-      console.error(error);
-      return next(error);
+      console.error(error)
+      return next(error)
     }
     if (user) {
-      req.user = user;
-      return next();
-    } else if (info && info.name === "TokenExpiredError") {
-      return res.sendStatus(401);
+      req.user = user
+      return next()
+    } else if (info && info.name === 'TokenExpiredError') {
+      return res.sendStatus(401)
     } else {
-      next();
+      next()
     }
-  })(req, res, next);
-};
+  })(req, res, next)
+}
 
-module.exports = authenticate;
+module.exports = authenticate

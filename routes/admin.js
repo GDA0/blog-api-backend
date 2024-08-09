@@ -1,11 +1,11 @@
-const express = require("express");
+const express = require('express')
 
-const adminController = require("../src/controllers/admin");
+const adminController = require('../src/controllers/admin')
 
-const router = express.Router();
+const router = express.Router()
 
-router.get("/", adminController.handleIndexGet);
+router.get('/', adminController.handleIndexGet)
 
-router.put("/:postId", adminController.handleIndexPut);
+router.put('/:postId', adminController.handleIndexPut)
 
-module.exports = router;
+module.exports = router
