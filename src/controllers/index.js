@@ -2,7 +2,7 @@ const database = require("../models/database");
 
 async function handleIndexGet(req, res) {
   try {
-    const posts = await database.findPosts();
+    const posts = await database.findPublishedPosts();
     if (req.user) {
       const { id, firstName, lastName, username } = req.user;
       res.json({ user: { id, firstName, lastName, username }, posts });

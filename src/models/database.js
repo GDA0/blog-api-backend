@@ -67,7 +67,7 @@ async function findRefreshToken(token) {
   }
 }
 
-async function findPosts() {
+async function findPublishedPosts() {
   try {
     const posts = await prisma.post.findMany({
       where: {
@@ -120,6 +120,6 @@ module.exports = {
   findUser,
   createRefreshToken,
   findRefreshToken,
-  findPosts,
+  findPublishedPosts,
   createComment,
 };
